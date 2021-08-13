@@ -383,7 +383,7 @@ default_config:
 # Text to speech
 tts:
   - platform: google_translate
-    language: ru
+    language: en
 recorder:
   purge_keep_days: 2
   db_url: 'sqlite:///:memory:'
