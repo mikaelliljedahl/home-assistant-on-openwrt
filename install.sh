@@ -64,7 +64,7 @@ while true
 do
     try=$((try+1))
     if [ $try -le 5 ]; then
-        echo -e "\033[33m Installing python3.6...... try $try. \033[0m"
+        echo -e "\033[33m Installing python3.7...... try $try. \033[0m"
         opkg install python3
         if [ $? -ne 0 ]; then
             continue
@@ -72,7 +72,7 @@ do
             break
         fi
     else
-        echo -e "\033[31m ERROR! Install python3.6 failed, check the network connection, exit. \033[0m"
+        echo -e "\033[31m ERROR! Install python3.7 failed, check the network connection, exit. \033[0m"
         exit 0
     fi
 done
@@ -143,7 +143,7 @@ mkdir -p /usr/include/ffi && \
 cp ./home-assistant-on-openwrt/ffi* /usr/include/ffi && \
 ln -s /usr/lib/libffi.so.6.0.1 /usr/lib/libffi.so
 echo -e "\033[32m Install C library......libopenssl \033[0m"
-cp -r ./home-assistant-on-openwrt/openssl /usr/include/python3.6/ && \
+cp -r ./home-assistant-on-openwrt/openssl /usr/include/python3.7/ && \
 ln -s /usr/lib/libcrypto.so.1.0.0 /usr/lib/libcrypto.so && \
 ln -s /usr/lib/libssl.so.1.0.0 /usr/lib/libssl.so
 echo -e "\033[32m Install C library......libsodium \033[0m"
@@ -152,8 +152,8 @@ if [ $? -ne 0 ]; then
     echo -e "\033[31m ERROR! Install libsodium failed,  exit. \033[0m"
     exit 0
 fi
-cp ./home-assistant-on-openwrt/sodium.h /usr/include/python3.6/ && \
-cp -r ./home-assistant-on-openwrt/sodium /usr/include/python3.6/ && \
+cp ./home-assistant-on-openwrt/sodium.h /usr/include/python3.7/ && \
+cp -r ./home-assistant-on-openwrt/sodium /usr/include/python3.7/ && \
 ln -s /usr/lib/libsodium.so.23.1.0 /usr/lib/libsodium.so
 
 #Install dependent python module
@@ -163,7 +163,7 @@ do
     try=$((try+1))
     if [ $try -le 5 ]; then
         echo -e "\033[33m Install python module: PyNaCl...... try $try. \033[0m"
-        SODIUM_INSTALL=system pip3 install pynacl==1.3.0
+        SODIUM_INSTALL=system pip3 install pynacl
         if [ $? -ne 0 ]; then
             continue
         else
