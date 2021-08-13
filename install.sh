@@ -197,6 +197,34 @@ cd ..
 rm -rf hass-nabucasa-0.39.0.tar.gz hass-nabucasa-0.39.0
 
 
+# tmp might be small for frontend
+cd /root
+wget https://files.pythonhosted.org/packages/8f/9b/aa394eb6265a8ed90af2b318d1a4c844e6a35de22f7a24e275161322cccc/home-assistant-frontend-20201229.1.tar.gz -O home-assistant-frontend-20201229.1.tar.gz
+tar -zxf home-assistant-frontend-20201229.1.tar.gz
+cd home-assistant-frontend-20201229.1
+find ./hass_frontend/frontend_es5 -name '*.js' -exec rm -rf {} \;
+find ./hass_frontend/frontend_es5 -name '*.map' -exec rm -rf {} \;
+find ./hass_frontend/frontend_es5 -name '*.txt' -exec rm -rf {} \;
+find ./hass_frontend/frontend_latest -name '*.js' -exec rm -rf {} \;
+find ./hass_frontend/frontend_latest -name '*.map' -exec rm -rf {} \;
+find ./hass_frontend/frontend_latest -name '*.txt' -exec rm -rf {} \;
+
+find ./hass_frontend/static/mdi -name '*.json' -maxdepth 1 -exec rm -rf {} \;
+find ./hass_frontend/static/polyfills -name '*.js' -maxdepth 1 -exec rm -rf {} \;
+find ./hass_frontend/static/polyfills -name '*.map' -maxdepth 1 -exec rm -rf {} \;
+
+# shopping list and calendar missing gzipped
+gzip ./hass_frontend/static/translations/calendar/*
+gzip ./hass_frontend/static/translations/shopping_list/*
+
+find ./hass_frontend/static/translations -name '*.json' -exec rm -rf {} \;
+
+mv hass_frontend /usr/lib/python3.7/site-packages/hass_frontend
+python3 setup.py install
+cd ..
+rm -rf home-assistant-frontend-20201229.1.tar.gz home-assistant-frontend-20201229.1
+cd /tmp
+
 #Install Home Assistant
 try=0
 while true
