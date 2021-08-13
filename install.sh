@@ -3,7 +3,7 @@
 echo -e "Follow these instructions to mount a usb drive to overlay and create swap if your memory < 512 Mb: https://openwrt.org/docs/guide-user/additional-software/extroot_configuration"
 
 mkdir -p /root/tmp
-TMPDIR = /root/tmp
+export TMPDIR=/root/tmp
 
 #Compare the first version and the second version. If the first lower than the second return 0 , or return 1
 CompareVersion() {
@@ -63,7 +63,7 @@ do
     fi
 done
 
-#Install python3.6
+#Install python3.7
 try=0
 while true
 do
@@ -180,7 +180,21 @@ do
     fi
 done
 
-pip3 install ciso8601
+pip3 install -U ciso8601
+pip3 install -U yarl==1.4.2
+pip3 install -U aiohttp --user
+
+
+#Install hass_nabucasa and ha-frontend...
+echo "Install hass_nabucasa and ha-frontend..."
+wget https://github.com/NabuCasa/hass-nabucasa/archive/0.39.0.tar.gz -O - > hass-nabucasa-0.39.0.tar.gz
+tar -zxf hass-nabucasa-0.39.0.tar.gz
+cd hass-nabucasa-0.39.0
+sed -i 's/==.*"/"/' setup.py
+sed -i 's/>=.*"/"/' setup.py
+python3 setup.py install
+cd ..
+rm -rf hass-nabucasa-0.39.0.tar.gz hass-nabucasa-0.39.0
 
 
 #Install Home Assistant
