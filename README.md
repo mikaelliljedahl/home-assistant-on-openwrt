@@ -1,4 +1,4 @@
-# Script to install Home Assistant on OpenWRT
+# Script to install Home Assistant on OpenWRT 19.07.6
 Home Assistant is an open source home automation platform. It is able to track and control thousands of smart devices and offer a platform for automating control. Details on https://github.com/home-assistant/home-assistant.  
 Home Assistant supports only Windows, Linux, Mac and Raspberry offically. While this project is to install the Home Assistant on OpenWRT OS. So that you can run a Home Assistant on a router without having to run a 24-hours PC or Raspberry.   
 
@@ -7,34 +7,18 @@ Home Assistant supports only Windows, Linux, Mac and Raspberry offically. While 
 ## Hardware Requirements
 
 A complete installation of Home Assistant will take nearly 350 MB Flash and 130 MB RAM. More components require more storage.  
-Recommend device is GL-S1300. It has a 8 GB emmc, 512 MB RAM and a Quad-core CPU. It is enough for running Home Assistant and its routing function is also completely unaffected.  
+A device needs 8 GB of storage, 512 MB RAM (or swap) and a powerful CPU. 
+This fork contains script for installation on Netgear Nighthawk R8000 and similar devices. Before installation you need to mount a usb disk as /overlay and a swap file.
+Follow instructions on https://openwrt.org/docs/guide-user/additional-software/extroot_configuration 
+This is because that device only has 256 Mb. Compiling Python modules requres some disk and memory.
 
 ## Software Requirements
 
-Firmware version 3.023 for GL-S1300 or above.
-
-## Install using our scripts
-
-We recommend strongly that using our `gl-homeassistant.ipk` to install the Home Assistant. It provides an one-click installation script and has add Home Assistant into the system boot program.  
-
-You can install "gl-homeassistant" easily through the web. Just search "gl-homeassistant" in the "plug-ins" and click "install".
-Or you can manually install it in the SSH terminal typing this:
-
-```bash
-opkg update
-opkg install gl-homeassistant
-```
-
-After finished installing gl-homeassistant. You can using command in the SSH terminal to start the installation of Home Assistant.
-
-```bash
-hass-install
-```
-Wait for the installation finished. Usually it takes 20~30 minutes.
+OpenWRT 19.07.6 
 
 ## Install Manually
 
-If you didn't install gl-homeassistant. There is no command named "hass-install". You have to clone this project and excute it manually.
+You have to clone this project and excute install.sh manually.
 
 ### Clone this project
 
@@ -43,7 +27,7 @@ And then get into the root path and clone this project.
 
 ```bash
 cd /root/
-git clone https://github.com/gl-inet/home-assistant-on-openwrt.git
+git clonehttps://github.com/mikaelliljedahl/home-assistant-on-openwrt.git
 ```
 
 Note that maybe you'd install the git, use command like this:
@@ -78,7 +62,7 @@ Timer:starting
 
 ## Enjoy Home Assistant on The Router
 
-Connect to the S1300 through LAN ports or Wifi using your PC or phone. Visit the address `192.168.8.1:8123` , that's the web page for Home Assistant.  
+Connect to the Router through LAN ports or Wifi using your PC or phone. Visit the address `192.168.1.1:8123` , that's the web page for Home Assistant.  
 
 Now you can link your smart devices together with Home Assistant.  
 

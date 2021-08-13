@@ -7,7 +7,7 @@ default_config:
 #   base_url: example.duckdns.org:8123
 
 http:
-  server_host: 192.168.8.1
+  server_host: 192.168.1.1
   server_port: 8123
 
 recorder:

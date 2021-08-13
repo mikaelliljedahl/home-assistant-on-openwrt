@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo -e "Follow these instructions to mount a usb drive to overlay and create swap if your memory < 512 Mb: https://openwrt.org/docs/guide-user/additional-software/extroot_configuration"
+
+mkdir -p /root/tmp
+TMPDIR = /root/tmp
+
 #Compare the first version and the second version. If the first lower than the second return 0 , or return 1
 CompareVersion() {
     fversion_1=`echo $1 | awk -F '.' '{print $1}'`
@@ -175,6 +180,9 @@ do
     fi
 done
 
+pip3 install ciso8601
+
+
 #Install Home Assistant
 try=0
 while true
@@ -182,7 +190,191 @@ do
     try=$((try+1))
     if [ $try -le 5 ]; then
         echo -e "\033[33m Install HomeAssistant...... try $try. \033[0m"
-        python3 -m pip install homeassistant
+        #python3 -m pip install homeassistant
+        # following is from https://github.com/openlumi/homeassistant_on_openwrt/blob/main/ha_install.sh
+		cd /root/tmp
+		wget https://files.pythonhosted.org/packages/99/a0/dfb23c5fcf168825964cc367fd9d3ff62636b7f056077656e87880b1a356/homeassistant-2021.1.5.tar.gz -O - > /root/tmp/homeassistant-2021.1.5.tar.gz
+		tar -zxf /root/tmp/homeassistant-2021.1.5.tar.gz
+		rm -rf homeassistant-2021.1.5.tar.gz
+		cd homeassistant-2021.1.5/homeassistant/
+		echo '' > requirements.txt
+		
+		mv components components-orig
+		mkdir components
+		cd components-orig
+		
+		mv \
+  __init__.py \
+  alarm_control_panel \
+  alert \
+  alexa \
+  api \
+  auth \
+  automation \
+  binary_sensor \
+  camera \
+  climate \
+  cloud \
+  config \
+  cover \
+  default_config \
+  device_automation \
+  device_tracker \
+  fan \
+  frontend \
+  google_assistant \
+  google_translate \
+  group \
+  hassio \
+  history \
+  homeassistant \
+  http \
+  humidifier \
+  image_processing \
+  input_boolean \
+  input_datetime \
+  input_number \
+  input_select \
+  input_text \
+  ipp \
+  light \
+  lock \
+  logger \
+  logbook \
+  lovelace \
+  map \
+  media_player \
+  met \
+  mobile_app \
+  notify \
+  number \
+  onboarding \
+  persistent_notification \
+  person \
+  python_script \
+  recorder \
+  scene \
+  script \
+  search \
+  sensor \
+  shopping_list \
+  ssdp \
+  stream \
+  sun \
+  switch \
+  system_health \
+  system_log \
+  time_date \
+  timer \
+  tts \
+  updater \
+  vacuum \
+  wake_on_lan \
+  weather \
+  webhook \
+  websocket_api \
+  workday \
+  xiaomi_aqara \
+  xiaomi_miio \
+  zeroconf \
+  zha \
+  zone \
+  blueprint \
+  counter \
+  image \
+  media_source \
+  tag \
+  panel_custom \
+  brother \
+  discovery \
+  mqtt \
+  mpd \
+  telegram \
+  telegram_bot \
+  ../components
+  
+  
+# serve static with gzipped files
+sed -i 's/filepath = self._directory.joinpath(filename).resolve()/try:\n                filepath = self._directory.joinpath(Path(rel_url + ".gz")).resolve()\n                if not filepath.exists():\n                    raise FileNotFoundError()\n            except Exception as e:\n                filepath = self._directory.joinpath(filename).resolve()/' http/static.py
+
+sed -i 's/sqlalchemy==1.3.20/sqlalchemy/' recorder/manifest.json
+sed -i 's/pillow==7.2.0/pillow/' image/manifest.json
+sed -i 's/, UnidentifiedImageError//' image/__init__.py
+sed -i 's/except UnidentifiedImageError/except OSError/' image/__init__.py
+sed -i 's/zeroconf==0.28.8/zeroconf/' zeroconf/manifest.json
+sed -i 's/netdisco==2.8.2/netdisco/' discovery/manifest.json
+sed -i 's/PyNaCl==1.3.0/PyNaCl/' mobile_app/manifest.json
+sed -i 's/"defusedxml==0.6.0", "netdisco==2.8.2"/"defusedxml", "netdisco"/' ssdp/manifest.json
+# remove unwanted zha requirements
+sed -i 's/"bellows==0.21.0",//' zha/manifest.json
+sed -i 's/"zigpy-cc==0.5.2",//' zha/manifest.json
+sed -i 's/"zigpy-deconz==0.11.1",//' zha/manifest.json
+sed -i 's/"zigpy-xbee==0.13.0",//' zha/manifest.json
+sed -i 's/"zigpy-znp==0.3.0"//' zha/manifest.json
+sed -i 's/"zigpy-zigate==0.7.3",/"zigpy-zigate"/' zha/manifest.json
+sed -i 's/import bellows.zigbee.application//' zha/core/const.py
+sed -i 's/import zigpy_cc.zigbee.application//' zha/core/const.py
+sed -i 's/import zigpy_deconz.zigbee.application//' zha/core/const.py
+sed -i 's/import zigpy_xbee.zigbee.application//' zha/core/const.py
+sed -i 's/import zigpy_znp.zigbee.application//' zha/core/const.py
+sed -i -e '/znp = (/,/)/d' -e '/ezsp = (/,/)/d' -e '/deconz = (/,/)/d' -e '/ti_cc = (/,/)/d' -e '/xbee = (/,/)/d' zha/core/const.py
+
+sed -i 's/"cloud",//' default_config/manifest.json
+sed -i 's/"mobile_app",//' default_config/manifest.json
+sed -i 's/"updater",//' default_config/manifest.json
+
+cd ../..
+sed -i 's/    "/    # "/' homeassistant/generated/config_flows.py
+sed -i 's/    # "mqtt"/    "mqtt"/' homeassistant/generated/config_flows.py
+sed -i 's/    # "zha"/    "zha"/' homeassistant/generated/config_flows.py
+
+sed -i 's/install_requires=REQUIRES/install_requires=[]/' setup.py
+python3 setup.py install
+cd ../
+rm -rf homeassistant-2021.1.5/
+
+mkdir -p /etc/homeassistant
+ln -s /etc/homeassistant /root/.homeassistant
+cat << "EOF" > /etc/homeassistant/configuration.yaml
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+# Text to speech
+tts:
+  - platform: google_translate
+    language: ru
+recorder:
+  purge_keep_days: 2
+  db_url: 'sqlite:///:memory:'
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+EOF
+
+touch /etc/homeassistant/groups.yaml
+touch /etc/homeassistant/automations.yaml
+touch /etc/homeassistant/scripts.yaml
+touch /etc/homeassistant/scenes.yaml
+
+echo "Create starting script in init.d"
+cat << "EOF" > /etc/init.d/homeassistant
+#!/bin/sh /etc/rc.common
+START=99
+USE_PROCD=1
+start_service()
+{
+    procd_open_instance
+    procd_set_param command hass --config /etc/homeassistant
+    procd_set_param stdout 1
+    procd_set_param stderr 1
+    procd_close_instance
+}
+EOF
+chmod +x /etc/init.d/homeassistant
+/etc/init.d/homeassistant enable
+
+echo "Done."
+		
         if [ $? -ne 0 ]; then
             continue
         else
